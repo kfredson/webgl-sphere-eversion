@@ -259,7 +259,7 @@ section {
           return;
         }
         
-        document.getElementById("loading").innerHTML = "<h1>Loading map data... <br>(may take a minute)</h1>";
+        document.getElementById("loading").innerHTML = "<h1>Loading data... <br>(may take a minute)</h1>";
 
         g.program = simpleSetup(
             gl,
@@ -340,32 +340,32 @@ section {
 	// Set up all the vertex attributes for vertices, normals and texCoords
 	g.normalBuffer1 = gl.createBuffer();        
 	gl.bindBuffer(gl.ARRAY_BUFFER, g.normalBuffer1);
-	gl.bufferData(gl.ARRAY_BUFFER, o.typedNormals[0], gl.STATIC_DRAW);
+	gl.bufferData(gl.ARRAY_BUFFER, o.typedNormals[0], gl.DYNAMIC_DRAW);
 	gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
 	
 	g.normalBuffer2 = gl.createBuffer();        
 	gl.bindBuffer(gl.ARRAY_BUFFER, g.normalBuffer2);
-	gl.bufferData(gl.ARRAY_BUFFER, o.typedNormals[1], gl.STATIC_DRAW);
+	gl.bufferData(gl.ARRAY_BUFFER, o.typedNormals[1], gl.DYNAMIC_DRAW);
 	gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 0, 0);
 	
 	g.enormalBuffer1 = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, g.enormalBuffer1);
-	gl.bufferData(gl.ARRAY_BUFFER, o.typedENormals[0], gl.STATIC_DRAW);
+	gl.bufferData(gl.ARRAY_BUFFER, o.typedENormals[0], gl.DYNAMIC_DRAW);
 	gl.vertexAttribPointer(2, 3, gl.FLOAT, false, 0, 0);
 	
 	g.enormalBuffer2 = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, g.enormalBuffer2);
-	gl.bufferData(gl.ARRAY_BUFFER, o.typedENormals[1], gl.STATIC_DRAW);
+	gl.bufferData(gl.ARRAY_BUFFER, o.typedENormals[1], gl.DYNAMIC_DRAW);
 	gl.vertexAttribPointer(3, 3, gl.FLOAT, false, 0, 0);
 	
 	g.coordBuffer1 = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, g.coordBuffer1);
-	gl.bufferData(gl.ARRAY_BUFFER, o.typedArrays[0], gl.STATIC_DRAW);
+	gl.bufferData(gl.ARRAY_BUFFER, o.typedArrays[0], gl.DYNAMIC_DRAW);
 	gl.vertexAttribPointer(4, 3, gl.FLOAT, false, 0, 0);
 
 	g.coordBuffer2 = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, g.coordBuffer2);
-	gl.bufferData(gl.ARRAY_BUFFER, o.typedArrays[1], gl.STATIC_DRAW);
+	gl.bufferData(gl.ARRAY_BUFFER, o.typedArrays[1], gl.DYNAMIC_DRAW);
 	gl.vertexAttribPointer(5, 3, gl.FLOAT, false, 0, 0);
 	
 	//buffer stores initial position of points on the sphere to be able to bound rendering by latitude/longitude
@@ -553,7 +553,7 @@ section {
 		var buffNum = Math.floor(val*(g.typedArrays.length-1));
 		if (g.currentBuffer!=buffNum) {
 		gl.bindBuffer(gl.ARRAY_BUFFER, g.coordBuffer1);
-		console.log(buffNum);
+		//console.log(buffNum);
 	        gl.bufferSubData(gl.ARRAY_BUFFER, 0, g.typedArrays[buffNum]);
 	        gl.bindBuffer(gl.ARRAY_BUFFER, g.coordBuffer2);
 	        gl.bufferSubData(gl.ARRAY_BUFFER, 0, g.typedArrays[buffNum+1]);
