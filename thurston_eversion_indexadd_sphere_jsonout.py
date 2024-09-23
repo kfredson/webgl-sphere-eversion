@@ -130,14 +130,14 @@ def getMiddle(numLoops,insideProfile,outsideProfile,startIdx,topZ,bottomZ,r,gap)
             leveldict[counter+i] = 0
     baseCounter = counter
     for y in range(numLoops):
-        pts[counter] = numpy.array([outR[0]*math.cos((2*y+0.6)*math.pi/numLoops),outR[0]*math.sin((2*y+0.6)*math.pi/numLoops),outR[1]])
+        pts[counter] = numpy.array([outR[0]*math.cos((2*y+0.4)*math.pi/numLoops),outR[0]*math.sin((2*y+0.4)*math.pi/numLoops),outR[1]])
         counter += 1
-        pts[counter] = numpy.array([outR[0]*math.cos((2*y+1.4)*math.pi/numLoops),outR[0]*math.sin((2*y+1.4)*math.pi/numLoops),outR[1]])
+        pts[counter] = numpy.array([outR[0]*math.cos((2*y+1.6)*math.pi/numLoops),outR[0]*math.sin((2*y+1.6)*math.pi/numLoops),outR[1]])
         counter += 1
         pairs.append([counter-1,counter-2])
-        pts[counter] = numpy.array([intR[0]*math.cos((2*y+1.6)*math.pi/numLoops),intR[0]*math.sin((2*y+1.6)*math.pi/numLoops),intR[1]])
+        pts[counter] = numpy.array([intR[0]*math.cos((2*y+1.4)*math.pi/numLoops),intR[0]*math.sin((2*y+1.4)*math.pi/numLoops),intR[1]])
         counter += 1
-        pts[counter] = numpy.array([intR[0]*math.cos((2*y+2.4)*math.pi/numLoops),intR[0]*math.sin((2*y+2.4)*math.pi/numLoops),intR[1]])
+        pts[counter] = numpy.array([intR[0]*math.cos((2*y+2.6)*math.pi/numLoops),intR[0]*math.sin((2*y+2.6)*math.pi/numLoops),intR[1]])
         counter += 1
         pairs.append([counter-1,counter-2])
         for x in range(4):
@@ -150,17 +150,17 @@ def getMiddle(numLoops,insideProfile,outsideProfile,startIdx,topZ,bottomZ,r,gap)
         for z in range(numLoops):
             outR = outsideProfile[y]
             intR = insideProfile[y]
-            pts[counter] = numpy.array([outR[0]*math.cos((2*z+0.6)*math.pi/numLoops),outR[0]*math.sin((2*z+0.6)*math.pi/numLoops),outR[1]])
+            pts[counter] = numpy.array([outR[0]*math.cos((2*z+0.4)*math.pi/numLoops),outR[0]*math.sin((2*z+0.4)*math.pi/numLoops),outR[1]])
             bottom_perim.append(counter)
             counter += 1
-            pts[counter] = numpy.array([outR[0]*math.cos((2*z+1.4)*math.pi/numLoops),outR[0]*math.sin((2*z+1.4)*math.pi/numLoops),outR[1]])
+            pts[counter] = numpy.array([outR[0]*math.cos((2*z+1.6)*math.pi/numLoops),outR[0]*math.sin((2*z+1.6)*math.pi/numLoops),outR[1]])
             bottom_perim.append(counter)
             counter += 1
             pairs.append([counter-1,counter-2])
-            pts[counter] = numpy.array([intR[0]*math.cos((2*z+1.6)*math.pi/numLoops),intR[0]*math.sin((2*z+1.6)*math.pi/numLoops),intR[1]])
+            pts[counter] = numpy.array([intR[0]*math.cos((2*z+1.4)*math.pi/numLoops),intR[0]*math.sin((2*z+1.4)*math.pi/numLoops),intR[1]])
             bottom_perim.append(counter)
             counter += 1
-            pts[counter] = numpy.array([intR[0]*math.cos((2*z+2.4)*math.pi/numLoops),intR[0]*math.sin((2*z+2.4)*math.pi/numLoops),intR[1]])
+            pts[counter] = numpy.array([intR[0]*math.cos((2*z+2.6)*math.pi/numLoops),intR[0]*math.sin((2*z+2.6)*math.pi/numLoops),intR[1]])
             bottom_perim.append(counter)
             counter += 1
             pairs.append([counter-1,counter-2])
@@ -173,17 +173,17 @@ def getMiddle(numLoops,insideProfile,outsideProfile,startIdx,topZ,bottomZ,r,gap)
     outR = outsideProfile[-1]
     baseCounter = counter
     for y in range(numLoops):
-        pts[counter] = numpy.array([outR[0]*math.cos((2*y+0.6)*math.pi/numLoops),outR[0]*math.sin((2*y+0.6)*math.pi/numLoops),outR[1]])
+        pts[counter] = numpy.array([outR[0]*math.cos((2*y+0.4)*math.pi/numLoops),outR[0]*math.sin((2*y+0.4)*math.pi/numLoops),outR[1]])
         bottom_perim.append(counter)
         counter += 1
-        pts[counter] = numpy.array([outR[0]*math.cos((2*y+1.4)*math.pi/numLoops),outR[0]*math.sin((2*y+1.4)*math.pi/numLoops),outR[1]])
+        pts[counter] = numpy.array([outR[0]*math.cos((2*y+1.6)*math.pi/numLoops),outR[0]*math.sin((2*y+1.6)*math.pi/numLoops),outR[1]])
         bottom_perim.append(counter)
         counter += 1
         pairs.append([counter-1,counter-2])
-        pts[counter] = numpy.array([intR[0]*math.cos((2*y+1.6)*math.pi/numLoops),intR[0]*math.sin((2*y+1.6)*math.pi/numLoops),intR[1]])
+        pts[counter] = numpy.array([intR[0]*math.cos((2*y+1.4)*math.pi/numLoops),intR[0]*math.sin((2*y+1.4)*math.pi/numLoops),intR[1]])
         bottom_perim.append(counter)
         counter += 1
-        pts[counter] = numpy.array([intR[0]*math.cos((2*y+2.4)*math.pi/numLoops),intR[0]*math.sin((2*y+2.4)*math.pi/numLoops),intR[1]])
+        pts[counter] = numpy.array([intR[0]*math.cos((2*y+2.6)*math.pi/numLoops),intR[0]*math.sin((2*y+2.6)*math.pi/numLoops),intR[1]])
         bottom_perim.append(counter)
         counter += 1
         pairs.append([counter-1,counter-2])
