@@ -843,6 +843,12 @@ def round_floats(o):
     if isinstance(o, (list, tuple)): return [round_floats(x) for x in o]
     return o
 
+def reorder_faces(faces,positions):
+    for f in range(len(faces)):
+        if numpy.dot(numpy.cross(positions[0][faces[f][2]]-positions[0][faces[f][0]],positions[0][faces[f][1]]-positions[0][faces[f][0]]),positions[0][faces[f][0]]) < 0:
+            faces[f] = [faces[f][1],faces[f][0],faces[f][2]]
+
+                                                                                            
 if __name__ == '__main__':
     p1 = [[1,-2],[2.5,0.5],[2.7,0],[2.5,-0.5],[1,2]]
     p2 = [[0.5,-2],[2.5,1.5],[4.0,0],[2.5,-1.5],[0.5,2]]
@@ -1159,6 +1165,7 @@ if __name__ == '__main__':
     '''
                 
     temp_str = 'var coordDicts = $pos1; var faces = $faces;'
+    reorder_faces(nf,pos_list)
     #print(mf[0])
     temp_str = temp_str.replace('$faces',str(nf))
     
