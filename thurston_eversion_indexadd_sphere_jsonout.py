@@ -88,7 +88,7 @@ def mutate(faces, pos_list, topNode, joints, frac, edge_to_face, interp_type):
             nFaces.append(x)
     return nFaces
 
-def getMiddle(numLoops,insideProfile,outsideProfile,startIdx,topZ,bottomZ,r,gap):
+def getMiddle(numLoops,insideProfile,outsideProfile,cintProfile,coutProfile,startIdx,topZ,bottomZ,r,gap):
     pts = dict()
     faces = []
     counter = 0
@@ -98,6 +98,8 @@ def getMiddle(numLoops,insideProfile,outsideProfile,startIdx,topZ,bottomZ,r,gap)
     #Create first loop
     intR = insideProfile[0]
     outR = outsideProfile[0]
+    cintR = cintProfile[0]
+    coutR = coutProfile[0]
     outAdjust1 = []
     outAdjust2 = []
     inAdjust1 = []
@@ -113,105 +115,113 @@ def getMiddle(numLoops,insideProfile,outsideProfile,startIdx,topZ,bottomZ,r,gap)
     baseCounter = counter
     for y in range(numLoops):
         pts[counter] = numpy.array([r*math.cos((2*y+0.75)*math.pi/numLoops),r*math.sin((2*y+0.75)*math.pi/numLoops),bottomZ])
-        bottom_perim.append(counter)
+        counter += 1
+        pts[counter] = numpy.array([r*math.cos((2*y+1.0)*math.pi/numLoops),r*math.sin((2*y+1.0)*math.pi/numLoops),bottomZ])
         counter += 1
         pts[counter] = numpy.array([r*math.cos((2*y+1.25)*math.pi/numLoops),r*math.sin((2*y+1.25)*math.pi/numLoops),bottomZ])
-        bottom_perim.append(counter)
         counter += 1
         pts[counter] = numpy.array([r*math.cos((2*y+1.75)*math.pi/numLoops),r*math.sin((2*y+1.75)*math.pi/numLoops),bottomZ])
-        bottom_perim.append(counter)
+        counter += 1
+        pts[counter] = numpy.array([r*math.cos((2*y+2.0)*math.pi/numLoops),r*math.sin((2*y+2.0)*math.pi/numLoops),bottomZ])
         counter += 1
         pts[counter] = numpy.array([r*math.cos((2*y+2.25)*math.pi/numLoops),r*math.sin((2*y+2.25)*math.pi/numLoops),bottomZ])
-        bottom_perim.append(counter)
         counter += 1
-        for x in range(4):
-                faces.append([baseCounter+4*y+x,baseCounter+(4*y+x+1)%(4*numLoops),1])
-        for i in range(-4,0):
+        for x in range(6):
+                faces.append([baseCounter+6*y+x,baseCounter+(6*y+x+1)%(6*numLoops),1])
+        for i in range(-6,0):
             leveldict[counter+i] = 0
     baseCounter = counter
     for y in range(numLoops):
         pts[counter] = numpy.array([outR[0]*math.cos((2*y+0.4)*math.pi/numLoops),outR[0]*math.sin((2*y+0.4)*math.pi/numLoops),outR[1]])
         counter += 1
+        pts[counter] = numpy.array([coutR[0]*math.cos((2*y+1.0)*math.pi/numLoops),coutR[0]*math.sin((2*y+1.0)*math.pi/numLoops),coutR[1]])
+        counter += 1
         pts[counter] = numpy.array([outR[0]*math.cos((2*y+1.6)*math.pi/numLoops),outR[0]*math.sin((2*y+1.6)*math.pi/numLoops),outR[1]])
         counter += 1
-        pairs.append([counter-1,counter-2])
+        pairs.append([counter-1,counter-2,counter-3])
         pts[counter] = numpy.array([intR[0]*math.cos((2*y+1.4)*math.pi/numLoops),intR[0]*math.sin((2*y+1.4)*math.pi/numLoops),intR[1]])
+        counter += 1
+        pts[counter] = numpy.array([cintR[0]*math.cos((2*y+2.0)*math.pi/numLoops),cintR[0]*math.sin((2*y+2.0)*math.pi/numLoops),coutR[1]])
         counter += 1
         pts[counter] = numpy.array([intR[0]*math.cos((2*y+2.6)*math.pi/numLoops),intR[0]*math.sin((2*y+2.6)*math.pi/numLoops),intR[1]])
         counter += 1
-        pairs.append([counter-1,counter-2])
-        for x in range(4):
-                faces.append([baseCounter+4*y+x,baseCounter+(4*y+x+1)%(4*numLoops)-4*numLoops,baseCounter+4*y+x-4*numLoops])
-                faces.append([baseCounter+4*y+x,baseCounter+(4*y+x+1)%(4*numLoops)-4*numLoops,baseCounter+(4*y+x+1)%(4*numLoops)])
-        for i in range(-4,0):
+        pairs.append([counter-1,counter-2,counter-3])
+        for x in range(6):
+                faces.append([baseCounter+6*y+x,baseCounter+(6*y+x+1)%(6*numLoops)-6*numLoops,baseCounter+6*y+x-6*numLoops])
+                faces.append([baseCounter+6*y+x,baseCounter+(6*y+x+1)%(6*numLoops)-6*numLoops,baseCounter+(6*y+x+1)%(6*numLoops)])
+        for i in range(-6,0):
             leveldict[counter+i] = 0 
     for y in range(1,len(insideProfile)-1):
         baseCounter = counter
         for z in range(numLoops):
             outR = outsideProfile[y]
             intR = insideProfile[y]
+            cintR = cintProfile[y]
+            coutR = coutProfile[y]
             pts[counter] = numpy.array([outR[0]*math.cos((2*z+0.4)*math.pi/numLoops),outR[0]*math.sin((2*z+0.4)*math.pi/numLoops),outR[1]])
-            bottom_perim.append(counter)
+            counter += 1
+            pts[counter] = numpy.array([coutR[0]*math.cos((2*z+1.0)*math.pi/numLoops),coutR[0]*math.sin((2*z+1.0)*math.pi/numLoops),coutR[1]])
             counter += 1
             pts[counter] = numpy.array([outR[0]*math.cos((2*z+1.6)*math.pi/numLoops),outR[0]*math.sin((2*z+1.6)*math.pi/numLoops),outR[1]])
-            bottom_perim.append(counter)
             counter += 1
-            pairs.append([counter-1,counter-2])
+            pairs.append([counter-1,counter-2,counter-3])
             pts[counter] = numpy.array([intR[0]*math.cos((2*z+1.4)*math.pi/numLoops),intR[0]*math.sin((2*z+1.4)*math.pi/numLoops),intR[1]])
-            bottom_perim.append(counter)
+            counter += 1
+            pts[counter] = numpy.array([cintR[0]*math.cos((2*z+2.0)*math.pi/numLoops),cintR[0]*math.sin((2*z+2.0)*math.pi/numLoops),cintR[1]])
             counter += 1
             pts[counter] = numpy.array([intR[0]*math.cos((2*z+2.6)*math.pi/numLoops),intR[0]*math.sin((2*z+2.6)*math.pi/numLoops),intR[1]])
-            bottom_perim.append(counter)
             counter += 1
-            pairs.append([counter-1,counter-2])
-            for x in range(4):
-                faces.append([baseCounter+4*z+x,baseCounter+(4*z+x+1)%(4*numLoops)-4*numLoops,baseCounter+4*z+x-4*numLoops])
-                faces.append([baseCounter+4*z+x,baseCounter+(4*z+x+1)%(4*numLoops)-4*numLoops,baseCounter+(4*z+x+1)%(4*numLoops)])
-            for i in range(-4,0):
+            pairs.append([counter-1,counter-2,counter-3])
+            for x in range(6):
+                faces.append([baseCounter+6*z+x,baseCounter+(6*z+x+1)%(6*numLoops)-6*numLoops,baseCounter+6*z+x-6*numLoops])
+                faces.append([baseCounter+6*z+x,baseCounter+(6*z+x+1)%(6*numLoops)-6*numLoops,baseCounter+(6*z+x+1)%(6*numLoops)])
+            for i in range(-6,0):
                 leveldict[counter+i] = y 
     intR = insideProfile[-1]
     outR = outsideProfile[-1]
+    cintR = cintProfile[-1]
+    coutR = coutProfile[-1]
     baseCounter = counter
     for y in range(numLoops):
         pts[counter] = numpy.array([outR[0]*math.cos((2*y+0.4)*math.pi/numLoops),outR[0]*math.sin((2*y+0.4)*math.pi/numLoops),outR[1]])
-        bottom_perim.append(counter)
+        counter += 1
+        pts[counter] = numpy.array([coutR[0]*math.cos((2*y+1.0)*math.pi/numLoops),coutR[0]*math.sin((2*y+1.0)*math.pi/numLoops),coutR[1]])
         counter += 1
         pts[counter] = numpy.array([outR[0]*math.cos((2*y+1.6)*math.pi/numLoops),outR[0]*math.sin((2*y+1.6)*math.pi/numLoops),outR[1]])
-        bottom_perim.append(counter)
         counter += 1
-        pairs.append([counter-1,counter-2])
+        pairs.append([counter-1,counter-2,counter-3])
         pts[counter] = numpy.array([intR[0]*math.cos((2*y+1.4)*math.pi/numLoops),intR[0]*math.sin((2*y+1.4)*math.pi/numLoops),intR[1]])
-        bottom_perim.append(counter)
+        counter += 1
+        pts[counter] = numpy.array([cintR[0]*math.cos((2*y+2.0)*math.pi/numLoops),cintR[0]*math.sin((2*y+2.0)*math.pi/numLoops),coutR[1]])
         counter += 1
         pts[counter] = numpy.array([intR[0]*math.cos((2*y+2.6)*math.pi/numLoops),intR[0]*math.sin((2*y+2.6)*math.pi/numLoops),intR[1]])
-        bottom_perim.append(counter)
         counter += 1
-        pairs.append([counter-1,counter-2])
-        for i in range(-4,0):
+        pairs.append([counter-1,counter-2,counter-3])
+        for i in range(-6,0):
                 leveldict[counter+i] = len(insideProfile)-1
-        for x in range(4):
-                faces.append([baseCounter+4*y+x,baseCounter+(4*y+x+1)%(4*numLoops)-4*numLoops,baseCounter+4*y+x-4*numLoops])
-                faces.append([baseCounter+4*y+x,baseCounter+(4*y+x+1)%(4*numLoops)-4*numLoops,baseCounter+(4*y+x+1)%(4*numLoops)])
+        for x in range(6):
+                faces.append([baseCounter+6*y+x,baseCounter+(6*y+x+1)%(6*numLoops)-6*numLoops,baseCounter+6*y+x-6*numLoops])
+                faces.append([baseCounter+6*y+x,baseCounter+(6*y+x+1)%(6*numLoops)-6*numLoops,baseCounter+(6*y+x+1)%(6*numLoops)])
     baseCounter = counter
     for y in range(numLoops):
         pts[counter] = numpy.array([r*math.cos((2*y+0.75)*math.pi/numLoops),r*math.sin((2*y+0.75)*math.pi/numLoops),topZ])
-        top_perim.append(counter)
+        counter += 1
+        pts[counter] = numpy.array([r*math.cos((2*y+1.0)*math.pi/numLoops),r*math.sin((2*y+1.0)*math.pi/numLoops),topZ])
         counter += 1
         pts[counter] = numpy.array([r*math.cos((2*y+1.25)*math.pi/numLoops),r*math.sin((2*y+1.25)*math.pi/numLoops),topZ])
-        top_perim.append(counter)
         counter += 1
         pts[counter] = numpy.array([r*math.cos((2*y+1.75)*math.pi/numLoops),r*math.sin((2*y+1.75)*math.pi/numLoops),topZ])
-        top_perim.append(counter)
+        counter += 1
+        pts[counter] = numpy.array([r*math.cos((2*y+2.0)*math.pi/numLoops),r*math.sin((2*y+2.0)*math.pi/numLoops),topZ])
         counter += 1
         pts[counter] = numpy.array([r*math.cos((2*y+2.25)*math.pi/numLoops),r*math.sin((2*y+2.25)*math.pi/numLoops),topZ])
-        top_perim.append(counter)
         counter += 1
-        for i in range(-4,0):
+        for i in range(-6,0):
                 leveldict[counter+i] = len(insideProfile)-1
-        for x in range(4):
-                faces.append([baseCounter+4*y+x,baseCounter+(4*y+x+1)%(4*numLoops)-4*numLoops,baseCounter+4*y+x-4*numLoops])
-                faces.append([baseCounter+4*y+x,baseCounter+(4*y+x+1)%(4*numLoops)-4*numLoops,baseCounter+(4*y+x+1)%(4*numLoops)])
-                faces.append([baseCounter+4*y+x,baseCounter+(4*y+x+1)%(4*numLoops),0])
+        for x in range(6):
+                faces.append([baseCounter+6*y+x,baseCounter+(6*y+x+1)%(6*numLoops)-6*numLoops,baseCounter+6*y+x-6*numLoops])
+                faces.append([baseCounter+6*y+x,baseCounter+(6*y+x+1)%(6*numLoops)-6*numLoops,baseCounter+(6*y+x+1)%(6*numLoops)])
+                faces.append([baseCounter+6*y+x,baseCounter+(6*y+x+1)%(6*numLoops),0])
     return (faces,bottom_perim,top_perim,pts,leveldict,pairs)
 
 def det(a,b,c,d,e,f,g,h,i):
@@ -852,9 +862,12 @@ def reorder_faces(faces,positions):
 if __name__ == '__main__':
     p1 = [[1,-2],[2.5,0.5],[2.7,0],[2.5,-0.5],[1,2]]
     p2 = [[0.5,-2],[2.5,1.5],[4.0,0],[2.5,-1.5],[0.5,2]]
-    p1 = [[x,y] for x,y in p1]
-    p2 = [[x,y] for x,y in p2]
-    mf = getMiddle(16,p2,p1,0,2.5,-2.5,0.5,0.5)
+    p3 = [[0.5,-2],[2.5,1.5],[4.0,0],[2.5,-1.5],[0.5,2]]
+    p4 = [[0.5,-2],[2.5,1.5],[4.0,0],[2.5,-1.5],[0.5,2]]
+    #p1 = [[x,y] for x,y in p1]
+    #p2 = [[x,y] for x,y in p2]
+    #p3 = 
+    mf = getMiddle(14,p2,p1,p3,p4,0,2.5,-2.5,0.5,0.5)
 
     pairs = mf[5]
     levd = mf[4]
@@ -865,30 +878,38 @@ if __name__ == '__main__':
 
     for x in pairs:
         if levd[x[0]]==2:
-            newPos[x[0]] = oldPos[x[1]]
-            newPos[x[1]] = oldPos[x[0]]
+            newPos[x[0]] = oldPos[x[2]]
+            newPos[x[2]] = oldPos[x[0]]
+            newPos[x[1]] = oldPos[x[1]]
             interp_type[x[0]] = 1
             interp_type[x[1]] = 1
+            interp_type[x[2]] = 1
         elif levd[x[0]]==1 or levd[x[0]]==3:
-            newPos[x[0]] = numpy.array([oldPos[x[1]][0],oldPos[x[1]][1],-oldPos[x[1]][2]])
-            newPos[x[1]] = numpy.array([oldPos[x[0]][0],oldPos[x[0]][1],-oldPos[x[0]][2]])
+            newPos[x[0]] = numpy.array([oldPos[x[2]][0],oldPos[x[2]][1],-oldPos[x[2]][2]])
+            newPos[x[2]] = numpy.array([oldPos[x[0]][0],oldPos[x[0]][1],-oldPos[x[0]][2]])
+            newPos[x[1]] = numpy.array([oldPos[x[1]][0],oldPos[x[1]][1],-oldPos[x[1]][2]])
             interp_type[x[0]] = 1
             interp_type[x[1]] = 1
+            interp_type[x[2]] = 1
         elif levd[x[0]]==0 or levd[x[0]]==4:
             if numpy.linalg.norm(oldPos[x[0]][0:2]) > 0.75:
-                midpt = (oldPos[x[0]][0:2]+oldPos[x[1]][0:2])/2
+                midpt = (oldPos[x[0]][0:2]+oldPos[x[2]][0:2])/2
                 subtr = numpy.array([midpt[0],midpt[1],0])
-                newPos[x[0]] = oldPos[x[1]]-0.5*subtr
-                newPos[x[1]] = oldPos[x[0]]-0.5*subtr
+                newPos[x[0]] = oldPos[x[2]]-0.5*subtr
+                newPos[x[2]] = oldPos[x[0]]-0.5*subtr
+                newPos[x[1]] = oldPos[x[1]]-0.5*subtr
             else:
-                newPos[x[0]] = numpy.array([2*oldPos[x[1]][0],2*oldPos[x[1]][1],oldPos[x[1]][2]])
-                newPos[x[1]] = numpy.array([2*oldPos[x[0]][0],2*oldPos[x[0]][1],oldPos[x[0]][2]])
+                newPos[x[0]] = numpy.array([2*oldPos[x[2]][0],2*oldPos[x[2]][1],oldPos[x[2]][2]])
+                newPos[x[2]] = numpy.array([2*oldPos[x[0]][0],2*oldPos[x[0]][1],oldPos[x[0]][2]])
+                newPos[x[1]] = numpy.array([2*oldPos[x[1]][0],2*oldPos[x[1]][1],oldPos[x[1]][2]])
             if levd[x[0]] == 0:
                 interp_type[x[0]] = 3
                 interp_type[x[1]] = 3
+                interp_type[x[2]] = 3
             else:
                 interp_type[x[0]] = 2
                 interp_type[x[1]] = 2
+                interp_type[x[2]] = 2
 
     for x in oldPos:
         if x not in newPos:
@@ -1132,7 +1153,7 @@ if __name__ == '__main__':
     vertex_to_edge = vertexToEdge(nf)
     second_order_edge = secondOrderEdge(vertex_to_edge)
     repelIndices = getRepelIndices(second_order_edge)
-    blacklist = [6144, 7174, 7691, 8219, 5665, 5667, 7222, 7739, 8267, 5713, 5715, 7270, 7787, 8315, 5761, 130, 5763, 134, 138, 142, 146, 7318, 150, 154, 7835, 158, 162, 166, 170, 8363, 174, 5809, 178, 5811, 182, 186, 190, 7366, 7883, 8411, 5857, 5859, 7414, 7931, 259, 5380, 263, 267, 271, 5905, 275, 5907, 6934, 279, 283, 287, 291, 7462, 295, 7979, 299, 303, 5425, 307, 5427, 311, 315, 319, 5953, 5955, 6982, 7510, 8027, 5473, 5475, 6001, 6003, 7030, 7558, 8075, 5521, 5523, 6049, 6051, 7078, 7606, 8123, 5569, 5571, 6097, 6099, 7126, 7654, 8171, 5617, 5619]
+    #blacklist = [6144, 7174, 7691, 8219, 5665, 5667, 7222, 7739, 8267, 5713, 5715, 7270, 7787, 8315, 5761, 130, 5763, 134, 138, 142, 146, 7318, 150, 154, 7835, 158, 162, 166, 170, 8363, 174, 5809, 178, 5811, 182, 186, 190, 7366, 7883, 8411, 5857, 5859, 7414, 7931, 259, 5380, 263, 267, 271, 5905, 275, 5907, 6934, 279, 283, 287, 291, 7462, 295, 7979, 299, 303, 5425, 307, 5427, 311, 315, 319, 5953, 5955, 6982, 7510, 8027, 5473, 5475, 6001, 6003, 7030, 7558, 8075, 5521, 5523, 6049, 6051, 7078, 7606, 8123, 5569, 5571, 6097, 6099, 7126, 7654, 8171, 5617, 5619]   
     for i in range(200):
         lGrad = [getLocalGradient(cPos,indices,svecs) for cPos in cArr]
         #rGrad = [getRepelGradient(cPos,repelIndices,cArr[0]) for cPos in cArr]
@@ -1142,10 +1163,10 @@ if __name__ == '__main__':
         #relaxElasticEnergyTensor(cArr,indices,[derivA1,derivB1,derivC1])
         print(('done',i))
         print(cArr[0][0])
-        if i < 100:
-            harmonic(cArr,vertex_to_edge,0.995,[])
-        else:
-            harmonic(cArr,vertex_to_edge,0.995,blacklist)
+        #if i < 100:
+        #    harmonic(cArr,vertex_to_edge,0.995,[])
+        #else:
+        #    harmonic(cArr,vertex_to_edge,0.995,blacklist)'''
     #for i in range(5):
     #    cArr = harmonic(cArr,vertex_to_edge,0.9)
     twistArr = cArr
