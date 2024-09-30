@@ -469,22 +469,6 @@ def isSingular2(pt1,pt2,triangle_to_vertex,fList,singTrSet):
             singTrSet.add(x[0][0])
             #return True
     return False
-    
-def getFaces(numsegments,numLoops):
-    faces = []
-    #total number of vertices = north pole + south pole + numsegments*4*numLoops
-    #first vertex = 0 last vertex = 2+numsegments*4*numLoops-1
-    for x in range(4*numLoops):
-        faces.append([0,x+1,(x+1)%(4*numLoops)+1])
-    for x in range(numsegments-1):
-        for y in range(4*numLoops):
-            pair1 = [1+x*4*numLoops+y,1+x*4*numLoops+(y+1)%(4*numLoops)]
-            pair2 = [1+(x+1)*4*numLoops+y,1+(x+1)*4*numLoops+(y+1)%(4*numLoops)]
-            faces.append([pair1[0],pair1[1],pair2[0]])
-            faces.append([pair2[0],pair2[1],pair1[1]])
-    for x in range(4*numLoops):
-        faces.append([2+numsegments*4*numLoops-1,1+(numsegments-1)*4*numLoops+x,1+(numsegments-1)*4*numLoops+(x+1)%(4*numLoops)])
-    return faces
 
 def interpolate(pos1,pos2,t):
     pos3 = dict()
@@ -867,7 +851,7 @@ if __name__ == '__main__':
     #p1 = [[x,y] for x,y in p1]
     #p2 = [[x,y] for x,y in p2]
     #p3 = 
-    mf = getMiddle(14,p2,p1,p3,p4,0,2.5,-2.5,0.5,0.5)
+    mf = getMiddle(14,p2,p1,p4,p3,0,2.5,-2.5,0.5,0.5)
 
     pairs = mf[5]
     levd = mf[4]
