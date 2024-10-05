@@ -1181,6 +1181,7 @@ if __name__ == '__main__':
         subd=dict()
         for x in range(len(y)):
             subd[x] = list(numpy.copy(y[x]))
+            subd[x] = [float(str(y)) for y in subd[x]]
         pos_list.append(subd)
     #print(subd)
     pos_list = round_floats(pos_list)
