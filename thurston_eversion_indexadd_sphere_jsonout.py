@@ -915,7 +915,7 @@ if __name__ == '__main__':
         nAvg2 = numpy.array([cosv*avg2[0]-sinv*avg2[1],cosv*avg2[1]+sinv*avg2[0],-avg[2]])
         final_inverted[x[2]] = nAvg
         final_inverted[x[0]] = nAvg2
-        final_inverted[x[1]] = numpy.array([-newPos[x[1]][0],-newPos[x[1]][1],newPos[x[1]][2]])
+        final_inverted[x[1]] = numpy.array([newPos[x[1]][0],newPos[x[1]][1],newPos[x[1]][2]])
     for x in newPos:
         if x not in final_inverted and x!=0 and x!=1:
             tLength = math.sqrt(3*3-newPos[x][2]*newPos[x][2])
