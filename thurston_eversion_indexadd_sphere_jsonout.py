@@ -936,11 +936,12 @@ if __name__ == '__main__':
     edge_to_face = createEdgeToFace(face_to_edge)
     joints = createJoints(face_to_edge)
     pos_list = [initial,final_inverted,newPos,oldPos]
-    nf = mutate(mf[0], pos_list, 0, joints, 0.8, edge_to_face, interp_type)
+    #nf = mutate(mf[0], pos_list, 0, joints, 0.8, edge_to_face, interp_type)
+    nf = mf[0]
     face_to_edge = createFaceToEdge(nf)
     edge_to_face = createEdgeToFace(face_to_edge)
     joints = createJoints(face_to_edge)
-    for x in range(3):
+    '''for x in range(3):
         nf = mutate(nf, pos_list, 0, joints, 0.8, edge_to_face, interp_type)
         face_to_edge = createFaceToEdge(nf)
         edge_to_face = createEdgeToFace(face_to_edge)
@@ -950,7 +951,7 @@ if __name__ == '__main__':
         nf = mutate(nf, pos_list, 1, joints, 0.8, edge_to_face, interp_type)
         face_to_edge = createFaceToEdge(nf)
         edge_to_face = createEdgeToFace(face_to_edge)
-        joints = createJoints(face_to_edge)
+        joints = createJoints(face_to_edge)'''
 
     for x in initial:
         if initial[x][2]==2.5:
