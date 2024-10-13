@@ -915,7 +915,7 @@ if __name__ == '__main__':
         nAvg2 = numpy.array([cosv*avg2[0]-sinv*avg2[1],cosv*avg2[1]+sinv*avg2[0],-avg[2]])
         final_inverted[x[2]] = nAvg
         final_inverted[x[0]] = nAvg2
-        final_inverted[x[1]] = numpy.array([newPos[x[1]][0],newPos[x[1]][1],newPos[x[1]][2]])
+        final_inverted[x[1]] = numpy.array([avg2[0],avg2[1],-avg[2]])
     for x in newPos:
         if x not in final_inverted and x!=0 and x!=1:
             tLength = math.sqrt(3*3-newPos[x][2]*newPos[x][2])
@@ -941,7 +941,7 @@ if __name__ == '__main__':
     face_to_edge = createFaceToEdge(nf)
     edge_to_face = createEdgeToFace(face_to_edge)
     joints = createJoints(face_to_edge)
-    '''for x in range(3):
+    for x in range(3):
         nf = mutate(nf, pos_list, 0, joints, 0.8, edge_to_face, interp_type)
         face_to_edge = createFaceToEdge(nf)
         edge_to_face = createEdgeToFace(face_to_edge)
@@ -951,7 +951,7 @@ if __name__ == '__main__':
         nf = mutate(nf, pos_list, 1, joints, 0.8, edge_to_face, interp_type)
         face_to_edge = createFaceToEdge(nf)
         edge_to_face = createEdgeToFace(face_to_edge)
-        joints = createJoints(face_to_edge)'''
+        joints = createJoints(face_to_edge)
 
     for x in initial:
         if initial[x][2]==2.5:
