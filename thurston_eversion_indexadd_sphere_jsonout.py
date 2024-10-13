@@ -905,8 +905,8 @@ if __name__ == '__main__':
                 interp_type[x] = 2
 
     final_inverted = dict()
-    sinv = math.sin(math.pi/4*numLoops)
-    cosv = math.cos(math.pi/4*numLoops)
+    sinv = math.sin(math.pi/4/numLoops)
+    cosv = math.cos(math.pi/4/numLoops)
     for x in pairs:
         avg = -(newPos[x[0]]+newPos[x[2]])/2
         tLength = math.sqrt(3*3-avg[2]*avg[2])
