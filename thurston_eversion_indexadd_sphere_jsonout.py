@@ -851,7 +851,7 @@ if __name__ == '__main__':
     #p1 = [[x,y] for x,y in p1]
     #p2 = [[x,y] for x,y in p2]
     #p3 =
-    numLoops = 14
+    numLoops = 6
     mf = getMiddle(numLoops,p2,p1,p4,p3,0,2.5,-2.5,0.5,0.5)
 
     pairs = mf[5]
