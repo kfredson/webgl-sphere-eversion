@@ -846,7 +846,7 @@ def reorder_faces(faces,positions):
 if __name__ == '__main__':
     p1 = [[1,-2],[2.5,0.5],[2.7,0],[2.5,-0.5],[1,2]]
     p2 = [[0.5,-2],[2.5,1.5],[4.0,0],[2.5,-1.5],[0.5,2]]
-    p3 = [[1,-2],[2.5,0.3],[2.3,0],[2.5,-0.3],[1,2]]
+    p3 = [[1,-2],[2.5,0.4],[2.5,0],[2.5,-0.4],[1,2]]
     p4 = [[0.5,-2],[2.5,1.8],[4.5,0],[2.5,-1.8],[0.5,2]]
     #p1 = [[x,y] for x,y in p1]
     #p2 = [[x,y] for x,y in p2]
@@ -941,7 +941,7 @@ if __name__ == '__main__':
     face_to_edge = createFaceToEdge(nf)
     edge_to_face = createEdgeToFace(face_to_edge)
     joints = createJoints(face_to_edge)
-    for x in range(3):
+    '''for x in range(3):
         nf = mutate(nf, pos_list, 0, joints, 0.8, edge_to_face, interp_type)
         face_to_edge = createFaceToEdge(nf)
         edge_to_face = createEdgeToFace(face_to_edge)
@@ -951,7 +951,7 @@ if __name__ == '__main__':
         nf = mutate(nf, pos_list, 1, joints, 0.8, edge_to_face, interp_type)
         face_to_edge = createFaceToEdge(nf)
         edge_to_face = createEdgeToFace(face_to_edge)
-        joints = createJoints(face_to_edge)
+        joints = createJoints(face_to_edge)'''
 
     for x in initial:
         if initial[x][2]==2.5:
@@ -1014,10 +1014,10 @@ if __name__ == '__main__':
     twistArr.append(initial)
     centerPts = set()
 
-    for x in twistArr:
-        z0 = barycentric(nf,[x])
-        qf = barycentric(z0,[x])
-    nf = qf
+    #for x in twistArr:
+    #    z0 = barycentric(nf,[x])
+    #    qf = barycentric(z0,[x])
+    #nf = qf
     #nf = z0
     face_to_edge = createFaceToEdge(nf)
     edge_to_face = createEdgeToFace(face_to_edge)
