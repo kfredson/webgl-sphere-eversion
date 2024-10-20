@@ -936,12 +936,12 @@ if __name__ == '__main__':
     edge_to_face = createEdgeToFace(face_to_edge)
     joints = createJoints(face_to_edge)
     pos_list = [initial,final_inverted,newPos,oldPos]
-    #nf = mutate(mf[0], pos_list, 0, joints, 0.8, edge_to_face, interp_type)
-    nf = mf[0]
+    nf = mutate(mf[0], pos_list, 0, joints, 0.8, edge_to_face, interp_type)
+    #nf = mf[0]
     face_to_edge = createFaceToEdge(nf)
     edge_to_face = createEdgeToFace(face_to_edge)
     joints = createJoints(face_to_edge)
-    '''for x in range(3):
+    for x in range(3):
         nf = mutate(nf, pos_list, 0, joints, 0.8, edge_to_face, interp_type)
         face_to_edge = createFaceToEdge(nf)
         edge_to_face = createEdgeToFace(face_to_edge)
@@ -951,7 +951,7 @@ if __name__ == '__main__':
         nf = mutate(nf, pos_list, 1, joints, 0.8, edge_to_face, interp_type)
         face_to_edge = createFaceToEdge(nf)
         edge_to_face = createEdgeToFace(face_to_edge)
-        joints = createJoints(face_to_edge)'''
+        joints = createJoints(face_to_edge)
 
     for x in initial:
         if initial[x][2]==2.5:
@@ -1014,10 +1014,10 @@ if __name__ == '__main__':
     twistArr.append(initial)
     centerPts = set()
 
-    #for x in twistArr:
-    #    z0 = barycentric(nf,[x])
-    #    qf = barycentric(z0,[x])
-    #nf = qf
+    for x in twistArr:
+        z0 = barycentric(nf,[x])
+        qf = barycentric(z0,[x])
+    nf = qf
     #nf = z0
     face_to_edge = createFaceToEdge(nf)
     edge_to_face = createEdgeToFace(face_to_edge)
@@ -1141,7 +1141,7 @@ if __name__ == '__main__':
     second_order_edge = secondOrderEdge(vertex_to_edge)
     repelIndices = getRepelIndices(second_order_edge)
     #blacklist = [6144, 7174, 7691, 8219, 5665, 5667, 7222, 7739, 8267, 5713, 5715, 7270, 7787, 8315, 5761, 130, 5763, 134, 138, 142, 146, 7318, 150, 154, 7835, 158, 162, 166, 170, 8363, 174, 5809, 178, 5811, 182, 186, 190, 7366, 7883, 8411, 5857, 5859, 7414, 7931, 259, 5380, 263, 267, 271, 5905, 275, 5907, 6934, 279, 283, 287, 291, 7462, 295, 7979, 299, 303, 5425, 307, 5427, 311, 315, 319, 5953, 5955, 6982, 7510, 8027, 5473, 5475, 6001, 6003, 7030, 7558, 8075, 5521, 5523, 6049, 6051, 7078, 7606, 8123, 5569, 5571, 6097, 6099, 7126, 7654, 8171, 5617, 5619]   
-    for i in range(50):
+    for i in range(25):
         lGrad = [getLocalGradient(cPos,indices,svecs) for cPos in cArr]
         #rGrad = [getRepelGradient(cPos,repelIndices,cArr[0]) for cPos in cArr]
         r = relaxTensor(lGrad,cArr,cGrad,0.0,crossGrad,0.0,cGrad,indices,repelIndices)
@@ -1150,7 +1150,7 @@ if __name__ == '__main__':
         #relaxElasticEnergyTensor(cArr,indices,[derivA1,derivB1,derivC1])
         print(('done',i))
         print(cArr[10][0])
-        if i < 50:
+        if i < 25:
             harmonic(cArr,vertex_to_edge,0.995,[])
         #else:
         #    harmonic(cArr,vertex_to_edge,0.995,blacklist)
