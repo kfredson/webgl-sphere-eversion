@@ -941,13 +941,13 @@ if __name__ == '__main__':
     face_to_edge = createFaceToEdge(nf)
     edge_to_face = createEdgeToFace(face_to_edge)
     joints = createJoints(face_to_edge)
-    for x in range(3):
+    for x in range(2):
         nf = mutate(nf, pos_list, 0, joints, 0.8, edge_to_face, interp_type)
         face_to_edge = createFaceToEdge(nf)
         edge_to_face = createEdgeToFace(face_to_edge)
         joints = createJoints(face_to_edge)
 
-    for x in range(4):
+    for x in range(3):
         nf = mutate(nf, pos_list, 1, joints, 0.8, edge_to_face, interp_type)
         face_to_edge = createFaceToEdge(nf)
         edge_to_face = createEdgeToFace(face_to_edge)
@@ -1000,24 +1000,24 @@ if __name__ == '__main__':
     
 
     twistArr = [final_inverted]
-    for x in range(1,5):
-        nx = interpolate(final_inverted,newPos,x/5)
+    for x in range(1,10):
+        nx = interpolate(final_inverted,newPos,x/10)
         twistArr.append(nx)
     twistArr.append(newPos)
     for x in range(1,10):
         nx = getTwistMapping(newPos,oldPos,x/10,interp_type)
         twistArr.append(nx)
     twistArr.append(oldPos)
-    for x in range(1,5):
-        nx = interpolate(oldPos,initial,x/5)
+    for x in range(1,10):
+        nx = interpolate(oldPos,initial,x/10)
         twistArr.append(nx)
     twistArr.append(initial)
     centerPts = set()
 
-    for x in twistArr:
-        z0 = barycentric(nf,[x])
-        qf = barycentric(z0,[x])
-    nf = qf
+    #for x in twistArr:
+        #z0 = barycentric(nf,[x])
+        #qf = barycentric(z0,[x])
+    #nf = qf
     #nf = z0
     face_to_edge = createFaceToEdge(nf)
     edge_to_face = createEdgeToFace(face_to_edge)
@@ -1034,11 +1034,11 @@ if __name__ == '__main__':
                 rScaleFact = scaleFact*math.sqrt(3*3-twistArr[x][y][2]*twistArr[x][y][2])/numpy.linalg.norm(twistArr[x][y][0:2])
                 twistArr[x][y] = numpy.array([rScaleFact*twistArr[x][y][0],rScaleFact*twistArr[x][y][1],twistArr[x][y][2]])
 
-    for x in range(1,5):
-        twistArr[x] = interpolate(twistArr[0],twistArr[5],x/5)
+    for x in range(1,10):
+        twistArr[x] = interpolate(twistArr[0],twistArr[10],x/10)
 
-    for x in range(1,5):
-        twistArr[15+x] = interpolate(twistArr[15],twistArr[20],x/5)
+    for x in range(1,10):
+        twistArr[20+x] = interpolate(twistArr[20],twistArr[30],x/10)
     
 
     #for x in range(len(twistArr)-1):
@@ -1141,12 +1141,12 @@ if __name__ == '__main__':
     second_order_edge = secondOrderEdge(vertex_to_edge)
     repelIndices = getRepelIndices(second_order_edge)
     #blacklist = [6144, 7174, 7691, 8219, 5665, 5667, 7222, 7739, 8267, 5713, 5715, 7270, 7787, 8315, 5761, 130, 5763, 134, 138, 142, 146, 7318, 150, 154, 7835, 158, 162, 166, 170, 8363, 174, 5809, 178, 5811, 182, 186, 190, 7366, 7883, 8411, 5857, 5859, 7414, 7931, 259, 5380, 263, 267, 271, 5905, 275, 5907, 6934, 279, 283, 287, 291, 7462, 295, 7979, 299, 303, 5425, 307, 5427, 311, 315, 319, 5953, 5955, 6982, 7510, 8027, 5473, 5475, 6001, 6003, 7030, 7558, 8075, 5521, 5523, 6049, 6051, 7078, 7606, 8123, 5569, 5571, 6097, 6099, 7126, 7654, 8171, 5617, 5619]   
-    for i in range(25):
-        lGrad = [getLocalGradient(cPos,indices,svecs) for cPos in cArr]
+    for i in range(0):
+        #lGrad = [getLocalGradient(cPos,indices,svecs) for cPos in cArr]
         #rGrad = [getRepelGradient(cPos,repelIndices,cArr[0]) for cPos in cArr]
-        r = relaxTensor(lGrad,cArr,cGrad,0.0,crossGrad,0.0,cGrad,indices,repelIndices)
-        cGrad = r[0]
-        crossGrad = r[1]
+        #r = relaxTensor(lGrad,cArr,cGrad,0.0,crossGrad,0.0,cGrad,indices,repelIndices)
+        #cGrad = r[0]
+        #crossGrad = r[1]
         #relaxElasticEnergyTensor(cArr,indices,[derivA1,derivB1,derivC1])
         print(('done',i))
         print(cArr[10][0])

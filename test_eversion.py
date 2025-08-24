@@ -312,6 +312,18 @@ def testQuadraticPos(p0,p1,p2,t0,t1):
 #adjacent faces sharing an edge
 #rx(z1+(z2-z1)t).(x1+(x2-x1)t)
 def separateJointRecursive(x1,y1,z1,x2,y2,z2,level):
+    d1 = det(x1[0],x1[1],x1[2],y1[0],y1[1],y1[2],z1[0],z1[1],z1[2])
+    d2 = det(x2[0],x2[1],x2[2],y1[0],y1[1],y1[2],z1[0],z1[1],z1[2])
+    d3 = det(x2[0],x2[1],x2[2],y2[0],y2[1],y2[2],z1[0],z1[1],z1[2])
+    d4 = det(x2[0],x2[1],x2[2],y2[0],y2[1],y2[2],z2[0],z2[1],z2[2])
+    d5 = det(x1[0],x1[1],x1[2],y2[0],y2[1],y2[2],z1[0],z1[1],z1[2])
+    d6 = det(x2[0],x2[1],x2[2],y1[0],y1[1],y1[2],z2[0],z2[1],z2[2])
+    d7 = det(x1[0],x1[1],x1[2],y2[0],y2[1],y2[2],z2[0],z2[1],z2[2])
+    d8 = det(x1[0],x1[1],x1[2],y1[0],y1[1],y1[2],z2[0],z2[1],z2[2])
+    if (d1 > 0 and d2 > 0 and d3 > 0 and d4 > 0 and d5 > 0 and d6 > 0 and d7 > 0 and d8 > 0):
+        return True
+    if (d1 < 0 and d2 < 0 and d3 < 0 and d4 < 0 and d5 < 0 and d6 < 0 and d7 < 0 and d8 < 0):
+        return True
     r = orthoProjection(average(average(x1,y1),average(x2,y2)),z1)
     #r = randomFract()
     testFractionalVectors([x1,y1,z1,x2,y2,z2,r])
@@ -428,6 +440,7 @@ def separatePair(fPairs,pt1,pt2):
         if res:
             pass
         else:
+            print(p)
             badCount += 1
     return badCount
 
@@ -449,6 +462,7 @@ def separateJoint(faceToEdge,pt1,pt2):
         y2 = minus(pt2[oppPts[1]],pt2[edge[0]])
         z2 = minus(pt2[edge[1]],pt2[edge[0]])
         if separateJointRecursive(x1,y1,z1,x2,y2,z2,0)==False:
+            print(fList)
             badCount += 1
     return badCount
 
@@ -511,11 +525,42 @@ for r in p:
                  fractions.Fraction(int(100000*r[x][2]+0.5))]
     np.append(q1)
 
+
+a = [[1735, 148, 1523], [1737, 1735, 1523]]
+
+'''x1 = np[2][1737]
+y1 = np[2][1735]
+z1 = np[2][1523]
+x2 = np[3][1737]
+y2 = np[3][1735]
+z2 = np[3][1523]
+x1 = numpy.array([int(q) for q in x1])
+y1 = numpy.array([int(q) for q in y1])
+z1 = numpy.array([int(q) for q in z1])
+x2 = numpy.array([int(q) for q in x2])
+y2 = numpy.array([int(q) for q in y2])
+z2 = numpy.array([int(q) for q in z2])
+for w in range(1000):
+    x = w/1000*x1+(1000-w)/1000*x2
+    y = w/1000*y1+(1000-w)/1000*y2
+    z = w/1000*z1+(1000-w)/1000*z2
+    print((det(x[0],x[1],x[2],y[0],y[1],y[2],z[0],z[1],z[2]),w,x,y,z))
+    print(dot(y,z)/numpy.linalg.norm(y)/numpy.linalg.norm(z))'''
+
+'''for x in np:
+    s = set()
+    print('iter')
+    for y in x:
+        elt = (int(x[y][0]),int(x[y][1]),int(x[y][2]))
+        if elt in s:
+            print(('found dupe',elt,y))
+        s.add(elt)'''
+
 runTests()
 for x in range(len(p)-1):
-    print(separateJoint(faceToEdge,np[x],np[x+1]))
+    print(str(separateJoint(faceToEdge,np[x],np[x+1]))+' bad edges found in stage '+str(x))
 print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
 fPairs = createFPairs(t)
 for x in range(len(p)-1):
-    print(separatePair(fPairs,np[x],np[x+1]))
+    print(str(separatePair(fPairs,np[x],np[x+1]))+' bad vertices found in stage '+str(x))
 
