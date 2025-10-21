@@ -2,8 +2,8 @@ import numpy
 import math
 import random
 from numpy.polynomial import Polynomial as P
+import itertools
 import torch
-
 #import matplotlib.pyplot as plt
 #import matplotlib.tri as mtri
 #import matplotlib
@@ -86,6 +86,61 @@ def mutate(faces, pos_list, topNode, joints, frac, edge_to_face, interp_type):
     for x in faces:
         if topNode not in x:
             nFaces.append(x)
+    return nFaces
+
+def clip(faces, pos_list, vertex_to_edge, edge_to_face, clip_ratio):
+    nFaces = []
+    nStart = len(pos_list[0])
+    eDict = dict()
+    #print(nStart,len(pos_list[0]))
+    for q in edge_to_face:
+        e = edge_to_face[q]
+        fl = list(e)
+        eDict[(fl[0],frozenset(e))] = nStart
+        for x in range(len(pos_list)):
+            #print((nStart,len(pos_list[0])))
+            pos_list[x][nStart] = clip_ratio*pos_list[x][fl[0]]+(1-clip_ratio)*pos_list[x][fl[1]]
+        nStart += 1
+        eDict[(fl[1],frozenset(e))] = nStart
+        for x in range(len(pos_list)):
+            pos_list[x][nStart] = clip_ratio*pos_list[x][fl[1]]+(1-clip_ratio)*pos_list[x][fl[0]]
+        nStart += 1
+    for f in faces:
+        for x in range(len(pos_list)):
+            bCenter = 1/3*(pos_list[x][f[0]]+pos_list[x][f[1]]+pos_list[x][f[2]])
+            pos_list[x][nStart] = bCenter
+        nStart += 1
+        e1 = frozenset([f[0],f[1]])
+        e2 = frozenset([f[1],f[2]])
+        e3 = frozenset([f[2],f[0]])
+        n1 = eDict[(f[0],e1)]
+        n2 = eDict[(f[1],e1)]
+        n3 = eDict[(f[1],e2)]
+        n4 = eDict[(f[2],e2)]
+        n5 = eDict[(f[2],e3)]
+        n6 = eDict[(f[0],e3)]
+        nFaces.append([n1,n2,nStart-1])
+        nFaces.append([n2,n3,nStart-1])
+        nFaces.append([n3,n4,nStart-1])
+        nFaces.append([n4,n5,nStart-1])
+        nFaces.append([n5,n6,nStart-1])
+        nFaces.append([n6,n1,nStart-1])
+        nFaces.append([f[1],n2,n3])
+        nFaces.append([f[2],n4,n5])
+        nFaces.append([f[0],n6,n1])
+    for v in vertex_to_edge:
+        for x in range(len(pos_list)):
+            pSum = numpy.array([0.,0.,0.])
+            cMin = None
+            cDist = -1
+            for y in itertools.combinations(vertex_to_edge[v],3):
+                #print(pos_list[x][eDict[(y,frozenset([v,y]))]])
+                #print(y)
+                nPt = 1./3.*(pos_list[x][y[0]]+pos_list[x][y[1]]+pos_list[x][y[2]])
+                if cDist==-1 or numpy.linalg.norm(nPt-pos_list[x][v]) < cDist:
+                    cMin = nPt
+                    cDist = numpy.linalg.norm(nPt-pos_list[x][v])
+            pos_list[x][v] = cMin
     return nFaces
 
 def getMiddle(numLoops,insideProfile,outsideProfile,cintProfile,coutProfile,startIdx,topZ,bottomZ,r,gap):
@@ -851,7 +906,7 @@ if __name__ == '__main__':
     #p1 = [[x,y] for x,y in p1]
     #p2 = [[x,y] for x,y in p2]
     #p3 =
-    numLoops = 12
+    numLoops = 10
     mf = getMiddle(numLoops,p2,p1,p4,p3,0,2.5,-2.5,0.5,0.5)
 
     pairs = mf[5]
@@ -941,13 +996,13 @@ if __name__ == '__main__':
     face_to_edge = createFaceToEdge(nf)
     edge_to_face = createEdgeToFace(face_to_edge)
     joints = createJoints(face_to_edge)
-    for x in range(2):
+    for x in range(1):
         nf = mutate(nf, pos_list, 0, joints, 0.8, edge_to_face, interp_type)
         face_to_edge = createFaceToEdge(nf)
         edge_to_face = createEdgeToFace(face_to_edge)
         joints = createJoints(face_to_edge)
 
-    for x in range(3):
+    for x in range(2):
         nf = mutate(nf, pos_list, 1, joints, 0.8, edge_to_face, interp_type)
         face_to_edge = createFaceToEdge(nf)
         edge_to_face = createEdgeToFace(face_to_edge)
@@ -1014,11 +1069,11 @@ if __name__ == '__main__':
     twistArr.append(initial)
     centerPts = set()
 
-    #for x in twistArr:
-        #z0 = barycentric(nf,[x])
+    for x in twistArr:
+        z0 = barycentric(nf,[x])
         #qf = barycentric(z0,[x])
     #nf = qf
-    #nf = z0
+    nf = z0
     face_to_edge = createFaceToEdge(nf)
     edge_to_face = createEdgeToFace(face_to_edge)
     joints = createJoints(face_to_edge)
@@ -1114,12 +1169,121 @@ if __name__ == '__main__':
         divisor = torch.transpose(divisor,0,1)
         return (a1-b1)/divisor
 
-    cArr = [torch.tensor(numpy.zeros((len(twistArr[0]),3))) for x in range(len(twistArr))]
+    twistNumpy = numpy.zeros((len(twistArr),len(twistArr[0]),3))
+    
     for y in range(len(twistArr)):
         for x in twistArr[y]:
             for i in range(3):
-                cArr[y][x][i] = twistArr[y][x][i]
+                twistNumpy[y][x][i] = twistArr[y][x][i]
 
+    
+    cArr = torch.tensor(twistNumpy,requires_grad=True)
+
+    reorder_faces(nf,pos_list)
+
+    indexSelect0 = []
+    indexSelect1 = []
+    indexSelect2 = []
+
+    fcindex = dict()
+    for f in enumerate(nf):
+        fcindex[frozenset(f[1])] = f[0]
+
+    edgeSelect0 = []
+    edgeSelect1 = []
+
+    edges0 = []
+    edges1 = []
+    for x in edge_to_face:
+        e = list(edge_to_face[x])
+        edges0.append(e[0]) 
+        edges1.append(e[1])
+
+    edges0 = torch.tensor(edges0)
+    edges1 = torch.tensor(edges1)
+
+    for x in edge_to_face:
+        e = list(edge_to_face[x])
+        opp_pts = [p for p in x if p not in e]
+        edgeSelect0.append(fcindex[frozenset([e[0],e[1],opp_pts[0]])])
+        edgeSelect1.append(fcindex[frozenset([e[0],e[1],opp_pts[1]])])
+    
+    for f in nf:
+        indexSelect0.append(f[0])
+        indexSelect1.append(f[1])
+        indexSelect2.append(f[2])
+
+    indexSelect0 = torch.tensor(indexSelect0)
+    indexSelect1 = torch.tensor(indexSelect1)
+    indexSelect2 = torch.tensor(indexSelect2)
+
+    edgeSelect0 = torch.tensor(edgeSelect0)
+    edgeSelect1 = torch.tensor(edgeSelect1)
+
+    for i in range(1000):
+        print(i)
+        pts0 = torch.index_select(cArr,1,indexSelect0)
+        pts1 = torch.index_select(cArr,1,indexSelect1)
+        pts2 = torch.index_select(cArr,1,indexSelect2)
+
+        v1 = pts1-pts0
+        v2 = pts2-pts0
+
+        normals = torch.linalg.cross(v1,v2,dim=2)
+
+        norms0 = torch.index_select(normals,1,edgeSelect0)
+        norms1 = torch.index_select(normals,1,edgeSelect1)
+
+        nn0 = torch.linalg.norm(norms0,dim=2)
+        nn1 = torch.linalg.norm(norms1,dim=2)
+
+        nnorms0 = norms0/nn0.unsqueeze(2)
+        nnorms1 = norms1/nn1.unsqueeze(2)
+
+        vq = nnorms0-nnorms1
+
+        tot = torch.linalg.norm(vq,dim=2)
+        tot1 = tot*tot
+
+        stage_length = tot1.shape[0]
+        timeSelect0 = torch.tensor(range(0,stage_length-1))
+        timeSelect1 = torch.tensor(range(1,stage_length))
+
+        tnorms0 = torch.index_select(normals,0,timeSelect0)
+        tnorms1 = torch.index_select(normals,0,timeSelect1)
+
+        nn0 = torch.linalg.norm(tnorms0,dim=2)
+        nn1 = torch.linalg.norm(tnorms1,dim=2)
+
+        ttnorms0 = tnorms0/nn0.unsqueeze(2)
+        ttnorms1 = tnorms1/nn1.unsqueeze(2)
+
+        vq = ttnorms0-ttnorms1
+
+        tot = torch.linalg.norm(vq,dim=2)
+        tot2 = tot*tot
+
+        
+
+        e0 = torch.index_select(cArr,1,edges0)
+        e1 = torch.index_select(cArr,1,edges1)
+        lengths = e0-e1
+        flengths = torch.linalg.norm(lengths,dim=2)
+        flengths = flengths*flengths
+
+        fsum = torch.sum(tot1)+0.05*torch.sum(flengths)
+        fsum.backward()
+
+        cGrad = cArr.grad
+        
+        for x in range(cGrad.shape[0]):
+            if x==0 or x==cGrad.shape[0]-1:
+                for y in range(cArr.shape[1]):
+                    for z in range(cArr.shape[2]):
+                        cGrad[x][y][z] = 0.
+        cArr = (cArr-0.00005*cGrad).detach().clone().requires_grad_(True)
+    
+    '''
     #for x in range(len(cArr)):
     #    cArr[x][1] = cArr[x][1]*(1+(cArr[x][0])**2)/4
     #    cArr[x][2] = cArr[x][2]*(1+(cArr[x][0])**2)/4
@@ -1128,18 +1292,18 @@ if __name__ == '__main__':
     faceList = [f for f in edge_to_face]
 
     
-    indices = getIndices(edge_to_face)
-    indices = [torch.tensor(x) for x in indices]
-    svecs = assembleTensors(twistArr[0],edge_to_face)
-    svecs = [torch.tensor(x) for x in svecs]
+    #indices = getIndices(edge_to_face)
+    #indices = [torch.tensor(x) for x in indices]
+    #svecs = assembleTensors(twistArr[0],edge_to_face)
+    #svecs = [torch.tensor(x) for x in svecs]
     #b1b1,b1b2,b2b2,detb1b2
-    svecs = [svecs[0]*svecs[0]+svecs[1]*svecs[1],svecs[0]*svecs[2]+svecs[1]*svecs[3],svecs[2]*svecs[2]+svecs[3]*svecs[3],svecs[0]*svecs[3]-svecs[1]*svecs[2],svecs[4]]
+    #svecs = [svecs[0]*svecs[0]+svecs[1]*svecs[1],svecs[0]*svecs[2]+svecs[1]*svecs[3],svecs[2]*svecs[2]+svecs[3]*svecs[3],svecs[0]*svecs[3]-svecs[1]*svecs[2],svecs[4]]
     cArr = cArr
-    cGrad = [torch.tensor(numpy.zeros((len(twistArr[0]),3))) for x in range(len(twistArr))]
-    crossGrad = [torch.tensor(numpy.zeros((len(twistArr[0]),3))) for x in range(len(twistArr))]
+    #cGrad = [torch.tensor(numpy.zeros((len(twistArr[0]),3))) for x in range(len(twistArr))]
+    #crossGrad = [torch.tensor(numpy.zeros((len(twistArr[0]),3))) for x in range(len(twistArr))]
     vertex_to_edge = vertexToEdge(nf)
     second_order_edge = secondOrderEdge(vertex_to_edge)
-    repelIndices = getRepelIndices(second_order_edge)
+    #repelIndices = getRepelIndices(second_order_edge)
     #blacklist = [6144, 7174, 7691, 8219, 5665, 5667, 7222, 7739, 8267, 5713, 5715, 7270, 7787, 8315, 5761, 130, 5763, 134, 138, 142, 146, 7318, 150, 154, 7835, 158, 162, 166, 170, 8363, 174, 5809, 178, 5811, 182, 186, 190, 7366, 7883, 8411, 5857, 5859, 7414, 7931, 259, 5380, 263, 267, 271, 5905, 275, 5907, 6934, 279, 283, 287, 291, 7462, 295, 7979, 299, 303, 5425, 307, 5427, 311, 315, 319, 5953, 5955, 6982, 7510, 8027, 5473, 5475, 6001, 6003, 7030, 7558, 8075, 5521, 5523, 6049, 6051, 7078, 7606, 8123, 5569, 5571, 6097, 6099, 7126, 7654, 8171, 5617, 5619]   
     for i in range(0):
         #lGrad = [getLocalGradient(cPos,indices,svecs) for cPos in cArr]
@@ -1156,6 +1320,7 @@ if __name__ == '__main__':
         #    harmonic(cArr,vertex_to_edge,0.995,blacklist)
     #for i in range(5):
     #    cArr = harmonic(cArr,vertex_to_edge,0.9)
+    '''
     twistArr = cArr
     posList = []
     for x in twistArr:
@@ -1163,25 +1328,19 @@ if __name__ == '__main__':
         for y in range(len(x)):
             nd[y] = x[y]
         posList.append(nd)
-
-    '''for x in range(len(twistArr)-1):
-        q = isSingular(posList[x],posList[x+1],edge_to_face,joints,mf[4])
-        print(x,q)
-        q = isSingular2(posList[x],posList[x+1],triangle_to_vertex,mf[4],singularTriangles1)
-        print(x,q)
-        print('########################################################################################################')
-    '''
+    
+    #nf = clip(nf, posList, vertex_to_edge, edge_to_face, 0.8)
                 
     temp_str = 'var coordDicts = $pos1; var faces = $faces;'
-    reorder_faces(nf,pos_list)
+    #reorder_faces(nf,posList)
     #print(mf[0])
     temp_str = temp_str.replace('$faces',str(nf))
     
     pos_list = []
-    for y in twistArr:
+    for y in posList:
         subd=dict()
         for x in range(len(y)):
-            subd[x] = list(numpy.copy(y[x]))
+            subd[x] = list(numpy.copy(y[x].detach()))
             subd[x] = [float(str(y)) for y in subd[x]]
         pos_list.append(subd)
     #print(subd)

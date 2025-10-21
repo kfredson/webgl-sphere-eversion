@@ -311,7 +311,14 @@ def testQuadraticPos(p0,p1,p2,t0,t1):
 #x1,y1,z1,x2,y2,z2,r  rational 3-vectors
 #adjacent faces sharing an edge
 #rx(z1+(z2-z1)t).(x1+(x2-x1)t)
+#Consider two triangles in 3-space that have the 
 def separateJointRecursive(x1,y1,z1,x2,y2,z2,level):
+    #Consider the 3x3 determinant as a function on R^9.
+    #Given x1,y1,z2,x2,y2,z2 3-vectors, we can consider the convex hull of the 8 points
+    #(x1,y1,z1),(x1,y1,z2),(x1,y2,z2),(x2,y2,z2),(
+    #If the determinant is strictly positive or stricly negative on all 8 points,
+    #then it follows by multilinearity that it is strictly positive (resp. negative)
+    #on the whole convex hull.  
     d1 = det(x1[0],x1[1],x1[2],y1[0],y1[1],y1[2],z1[0],z1[1],z1[2])
     d2 = det(x2[0],x2[1],x2[2],y1[0],y1[1],y1[2],z1[0],z1[1],z1[2])
     d3 = det(x2[0],x2[1],x2[2],y2[0],y2[1],y2[2],z1[0],z1[1],z1[2])
@@ -525,36 +532,9 @@ for r in p:
                  fractions.Fraction(int(100000*r[x][2]+0.5))]
     np.append(q1)
 
+#Validate that the triangulation is really a triangulation of a sphere
+edges = set()
 
-a = [[1735, 148, 1523], [1737, 1735, 1523]]
-
-'''x1 = np[2][1737]
-y1 = np[2][1735]
-z1 = np[2][1523]
-x2 = np[3][1737]
-y2 = np[3][1735]
-z2 = np[3][1523]
-x1 = numpy.array([int(q) for q in x1])
-y1 = numpy.array([int(q) for q in y1])
-z1 = numpy.array([int(q) for q in z1])
-x2 = numpy.array([int(q) for q in x2])
-y2 = numpy.array([int(q) for q in y2])
-z2 = numpy.array([int(q) for q in z2])
-for w in range(1000):
-    x = w/1000*x1+(1000-w)/1000*x2
-    y = w/1000*y1+(1000-w)/1000*y2
-    z = w/1000*z1+(1000-w)/1000*z2
-    print((det(x[0],x[1],x[2],y[0],y[1],y[2],z[0],z[1],z[2]),w,x,y,z))
-    print(dot(y,z)/numpy.linalg.norm(y)/numpy.linalg.norm(z))'''
-
-'''for x in np:
-    s = set()
-    print('iter')
-    for y in x:
-        elt = (int(x[y][0]),int(x[y][1]),int(x[y][2]))
-        if elt in s:
-            print(('found dupe',elt,y))
-        s.add(elt)'''
 
 runTests()
 for x in range(len(p)-1):
