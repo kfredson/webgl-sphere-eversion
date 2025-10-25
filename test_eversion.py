@@ -533,7 +533,20 @@ for r in p:
     np.append(q1)
 
 #Validate that the triangulation is really a triangulation of a sphere
-edges = set()
+edges = dict()
+for f in fcs:
+    e = [None,None,None]
+    e[0] = frozenset([f[0],f[1]])
+    e[1] = frozenset([f[1],f[2]])
+    e[2] = frozenset([f[2],f[0]])
+    for edge in e:
+        if edge in edges:
+            edges[edge].append(f)
+        else:
+            edges[edge] = [f]
+
+for e in edges:
+    assert(len(edges[e])==2)
 
 
 runTests()
